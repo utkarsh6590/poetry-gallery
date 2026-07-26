@@ -1,0 +1,14 @@
+{
+  "id": "patriotic",
+  "name": "Patriotic",
+  "description": "देश, राष्ट्रप्रेम, बलिदान और देश के प्रति गर्व की भावनाओं के लिए।",
+  "icon": "⚔",
+  "identityColor": "#8A6F55",
+  "poems": [
+    {
+      "title": "हम आज़ाद भगत की नस्ल हैं",
+      "text": "बंदूक तुम्हारी है, सरकार तुम्हारा है,\n\nतुम झूठ को सच लिख दो, अख़बार तुम्हारा है\n\nन्याय कहा खोजें ये अंधी अदालत में,\nYaha क़ानून तुम्हारी है, दरबार तुम्हारा है\n\nकमज़ोर पे चलाते हो हुक्म के कोड़े\nज़ालिम ये क्रूरता का किरदार तुम्हारा है।\n\nAtyachar ki bhi had hoti hai\n,Kyu bhul gye tum, .. ye bhi pariwar tumhara hai\n\nकुर्सी के नशे में तुम अंधे हुए बैठे ho,\nबेच दो देश कौड़ियों में, ये बाज़ार तुम्हारा है\n\nPar yaad rahe sataah ke gumani rakhwale,\n\nAazad- bhagat ke nasl hai hum\n, mitti me mila denge ek din, jo ahankar tumhara hai\n\nChlo swikaar hai\nGardan humari rhi, lo talwaar tumhara hai\n\nChalaao isko\nDekhte hai kitna lahu bahayegi , jo prahaar tumhara hai\n\n\nLekin yaad rhe\nआख़िरी साँस तलक ये लड़ाई जारी होगी,\nइस बार तय जीत हमारी है, और हार ततुम्हारा है।\n\nChhiii sarm aani chahiye tumhe hukumat\nKi aisa kirdaar tumhara hai",
+      "meaning": "यह कविता सत्ता के दुरुपयोग, अन्याय और देश की व्यवस्था के विरुद्ध विद्रोही चेतना को व्यक्त करती है। आज़ाद और भगत सिंह जैसे स्वतंत्रता सेनानियों की विरासत का उल्लेख करते हुए कवि अन्यायपूर्ण सत्ता को चुनौती देता है और जनता के संघर्ष को देश और न्याय के लिए जारी रखने का संकल्प व्यक्त करता है।"
+    }
+  ]
+}

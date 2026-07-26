@@ -1,6 +1,12 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+
+type Poem = {
+  title: string;
+  text: string;
+  meaning?: string;
+};
 
 type Mood = {
   id: string;
@@ -8,399 +14,538 @@ type Mood = {
   description: string;
   icon: string;
   identityColor: string;
+  poems: Poem[];
 };
 
-type Poem = {
-  id: number;
-  mood: string;
-  title: string;
-  text: string;
-  author: string;
-  date: string;
+type PoemWithMood = Poem & {
+  mood: Mood;
   visualClass: string;
-  rating: number;
-  likes: number;
-  views: number;
 };
 
-type SortMode = "latest" | "rating" | "popular" | "liked";
+type SortMode =
+  | "latest"
+  | "rating"
+  | "popular"
+  | "liked";
 
-function SampleLogo() {
+const visualClasses = [
+  "visual-default",
+  "visual-red",
+  "visual-rose",
+  "visual-burgundy",
+  "visual-blue",
+  "visual-night",
+  "visual-amber",
+  "visual-brown",
+  "visual-teal",
+  "visual-fire",
+  "visual-purple",
+  "visual-olive",
+];
+
+function Logo() {
   return (
-    <svg
-      className="sample-logo"
-      viewBox="0 0 100 100"
-      aria-label="Aansu-e-Ishq logo"
-    >
-      <rect
-        x="4"
-        y="4"
-        width="92"
-        height="92"
-        rx="26"
-        fill="#11100D"
-        stroke="#C5A46D"
-        strokeWidth="1"
-      />
-
-      <path
-        d="M27 70C45 60 61 42 75 22"
-        stroke="#C5A46D"
-        strokeWidth="3"
-        fill="none"
-        strokeLinecap="round"
-      />
-
-      <path
-        d="M35 63C46 59 56 53 64 44"
-        stroke="#E3C996"
-        strokeWidth="2"
-        fill="none"
-        strokeLinecap="round"
-      />
-
-      <path
-        d="M29 72C42 77 55 75 66 68"
-        stroke="#8D3035"
-        strokeWidth="3"
-        fill="none"
-        strokeLinecap="round"
-      />
-
-      <circle cx="75" cy="22" r="3" fill="#E3C996" />
-    </svg>
+    <img
+      src="/logo.jpg"
+      alt="Aansu-e-Ishq"
+      className="site-logo"
+    />
   );
 }
 
-const moods: Mood[] = [
-  {
-    id: "ishq",
-    name: "इश्क़",
-    description: "मोहब्बत की बातें",
-    icon: "♡",
-    identityColor: "#8d3035",
-  },
-  {
-    id: "tanhai",
-    name: "तन्हाई",
-    description: "जब अकेलापन बोले",
-    icon: "☁",
-    identityColor: "#405d78",
-  },
-  {
-    id: "dard",
-    name: "दर्द",
-    description: "कुछ अधूरे एहसास",
-    icon: "✦",
-    identityColor: "#9b7046",
-  },
-  {
-    id: "yaadein",
-    name: "यादें",
-    description: "जो पीछे छूट गया",
-    icon: "❧",
-    identityColor: "#43716c",
-  },
-  {
-    id: "gussa",
-    name: "गुस्सा",
-    description: "अंदर की आग",
-    icon: "♨",
-    identityColor: "#8d3b27",
-  },
-  {
-    id: "junoon",
-    name: "जुनून",
-    description: "जो रुकने न दे",
-    icon: "✧",
-    identityColor: "#704a82",
-  },
-  {
-    id: "swabhiman",
-    name: "स्वाभिमान",
-    description: "खुद से समझौता नहीं",
-    icon: "♕",
-    identityColor: "#777044",
-  },
-];
-
-const poems: Poem[] = [
-  {
-    id: 1,
-    mood: "ishq",
-    title: "तुम",
-    text: "तुमसे मोहब्बत कुछ ऐसी हुई,\nकि खुद से मिलना भी कम हो गया।\n\nतुम्हें सोचते सोचते,\nमेरा हर ख्वाब तुम हो गया।",
-    author: "Aansu-e-Ishq",
-    date: "2026-07-25",
-    visualClass: "visual-red",
-    rating: 4.8,
-    likes: 128,
-    views: 640,
-  },
-  {
-    id: 2,
-    mood: "ishq",
-    title: "मोहब्बत",
-    text: "तुम्हारा होना ही काफी था,\nमेरी दुनिया को खूबसूरत बनाने के लिए।\n\nवरना हम तो वो थे,\nजो खुद से भी मिला नहीं करते थे।",
-    author: "Aansu-e-Ishq",
-    date: "2026-07-24",
-    visualClass: "visual-rose",
-    rating: 4.6,
-    likes: 94,
-    views: 510,
-  },
-  {
-    id: 3,
-    mood: "ishq",
-    title: "इश्क़ का शहर",
-    text: "तेरे शहर में आकर,\nहम खुद को भूल गए।\n\nतू मिला तो लगा,\nहम पहले कभी पूरे थे ही नहीं।",
-    author: "Aansu-e-Ishq",
-    date: "2026-07-20",
-    visualClass: "visual-burgundy",
-    rating: 4.9,
-    likes: 176,
-    views: 820,
-  },
-  {
-    id: 4,
-    mood: "tanhai",
-    title: "तन्हाई",
-    text: "भीड़ में भी अकेला था मैं,\nशायद खुद से दूर था मैं।\n\nसबको अपना समझता रहा,\nऔर अंत में खुद का ही न रहा।",
-    author: "Aansu-e-Ishq",
-    date: "2026-07-23",
-    visualClass: "visual-blue",
-    rating: 4.7,
-    likes: 111,
-    views: 700,
-  },
-  {
-    id: 5,
-    mood: "tanhai",
-    title: "खामोशी",
-    text: "कुछ बातें कही नहीं जातीं,\nबस आंखों में ठहर जाती हैं।\n\nऔर कुछ लोग,\nजिंदगी से जाकर भी नहीं जाते।",
-    author: "Aansu-e-Ishq",
-    date: "2026-07-21",
-    visualClass: "visual-night",
-    rating: 4.9,
-    likes: 205,
-    views: 1050,
-  },
-  {
-    id: 6,
-    mood: "dard",
-    title: "दर्द",
-    text: "दर्द तो बहुत था दिल में,\nमगर शिकायत किससे करते।\n\nजिसे अपना समझा था,\nउसी से तो दूर थे।",
-    author: "Aansu-e-Ishq",
-    date: "2026-07-22",
-    visualClass: "visual-amber",
-    rating: 4.5,
-    likes: 83,
-    views: 450,
-  },
-  {
-    id: 7,
-    mood: "dard",
-    title: "अधूरापन",
-    text: "कुछ कहानियां पूरी होकर भी,\nपूरी नहीं होतीं।\n\nकुछ लोग मिलकर भी,\nहमारे नहीं होते।",
-    author: "Aansu-e-Ishq",
-    date: "2026-07-19",
-    visualClass: "visual-brown",
-    rating: 4.8,
-    likes: 142,
-    views: 690,
-  },
-  {
-    id: 8,
-    mood: "yaadein",
-    title: "यादें",
-    text: "कुछ लोग जाते नहीं,\nबस दिखना बंद हो जाते हैं।\n\nउनकी यादें मगर,\nहर रोज़ मिलने आती हैं।",
-    author: "Aansu-e-Ishq",
-    date: "2026-07-18",
-    visualClass: "visual-teal",
-    rating: 4.7,
-    likes: 132,
-    views: 620,
-  },
-  {
-    id: 9,
-    mood: "gussa",
-    title: "अब उम्मीद नहीं",
-    text: "अब किसी से नाराज़ नहीं हूं,\nबस उम्मीद करना छोड़ दिया है।\n\nजो समझना था,\nवो वक्त ने समझा दिया।",
-    author: "Aansu-e-Ishq",
-    date: "2026-07-17",
-    visualClass: "visual-fire",
-    rating: 4.9,
-    likes: 218,
-    views: 1200,
-  },
-  {
-    id: 10,
-    mood: "junoon",
-    title: "रुकना नहीं",
-    text: "रास्ते मुश्किल हैं तो क्या,\nचलना हमने सीखा है।\n\nगिरकर उठना आता है हमें,\nहारना नहीं।",
-    author: "Aansu-e-Ishq",
-    date: "2026-07-16",
-    visualClass: "visual-purple",
-    rating: 4.8,
-    likes: 155,
-    views: 880,
-  },
-  {
-    id: 11,
-    mood: "swabhiman",
-    title: "झुकना नहीं",
-    text: "जहां मेरी कदर न हो,\nवहां रुकना मेरी आदत नहीं।\n\nमैं अकेला चल सकता हूं,\nमगर झुककर नहीं।",
-    author: "Aansu-e-Ishq",
-    date: "2026-07-15",
-    visualClass: "visual-olive",
-    rating: 4.6,
-    likes: 91,
-    views: 530,
-  },
-];
-
 export default function Home() {
-  const [selectedMood, setSelectedMood] = useState("ishq");
-  const [selectedPoemId, setSelectedPoemId] = useState<number | null>(null);
-  const [savedPoems, setSavedPoems] = useState<number[]>([]);
-  const [userRatings, setUserRatings] = useState<Record<number, number>>({});
-  const [showCollection, setShowCollection] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [latestIndex, setLatestIndex] = useState(0);
-  const [sortMode, setSortMode] = useState<SortMode>("latest");
+  const [moods, setMoods] = useState<Mood[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const mood = moods.find((item) => item.id === selectedMood)!;
+  const [selectedMood, setSelectedMood] =
+    useState("");
+
+  const [selectedPoem, setSelectedPoem] =
+    useState<PoemWithMood | null>(null);
+
+  const [savedPoems, setSavedPoems] =
+    useState<string[]>([]);
+
+  const [showCollection, setShowCollection] =
+    useState(false);
+
+  const [menuOpen, setMenuOpen] =
+    useState(false);
+
+  const [latestIndex, setLatestIndex] =
+    useState(0);
+
+  const [sortMode, setSortMode] =
+    useState<SortMode>("latest");
+
+  const [isFlipped, setIsFlipped] =
+    useState(false);
+
+  const [rating, setRating] =
+    useState(0);
+
+  const [brandHindi, setBrandHindi] =
+    useState(false);
+
+  const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+
+  /*
+   * LOAD MOODS
+   */
 
   useEffect(() => {
-    const saved = localStorage.getItem("saved-poems");
-    const ratings = localStorage.getItem("poem-ratings");
+    const loadArtworks = async () => {
+      try {
+        const indexResponse = await fetch(
+          "/artworks/index.json"
+        );
 
-    if (saved) setSavedPoems(JSON.parse(saved));
-    if (ratings) setUserRatings(JSON.parse(ratings));
+        if (!indexResponse.ok) {
+          throw new Error(
+            "index.json could not be loaded"
+          );
+        }
+
+        const fileNames: string[] =
+          await indexResponse.json();
+
+        const moodFiles = await Promise.all(
+          fileNames.map(async (fileName) => {
+            const response = await fetch(
+              `/artworks/${fileName}`
+            );
+
+            if (!response.ok) {
+              throw new Error(
+                `${fileName} could not be loaded`
+              );
+            }
+
+            return response.json();
+          })
+        );
+
+        setMoods(moodFiles);
+
+        if (moodFiles.length > 0) {
+          setSelectedMood(moodFiles[0].id);
+        }
+      } catch (error) {
+        console.error(
+          "Failed to load artworks:",
+          error
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadArtworks();
   }, []);
 
-  const latestPoems = poems.slice(0, 5);
+  /*
+   * LOAD SAVED POEMS
+   */
+
+  useEffect(() => {
+    const saved =
+      localStorage.getItem("saved-poems");
+
+    if (saved) {
+      try {
+        setSavedPoems(JSON.parse(saved));
+      } catch {
+        setSavedPoems([]);
+      }
+    }
+  }, []);
+
+  /*
+   * BRAND ROTATION
+   */
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setLatestIndex((prev) => (prev + 1) % latestPoems.length);
-    }, 5000);
+      setBrandHindi((previous) => !previous);
+    }, 3500);
 
     return () => clearInterval(interval);
+  }, []);
+
+  /*
+   * ALL POEMS
+   */
+
+  const allPoems: PoemWithMood[] =
+    useMemo(() => {
+      return moods.flatMap((mood) =>
+        mood.poems.map((poem, index) => ({
+          ...poem,
+          mood,
+          visualClass:
+            visualClasses[
+              (index + mood.id.length) %
+                visualClasses.length
+            ],
+        }))
+      );
+    }, [moods]);
+
+  /*
+   * LATEST POEMS
+   */
+
+  const latestPoems = allPoems.slice(0, 5);
+
+  /*
+   * RECENT POEM ROTATION
+   */
+
+  useEffect(() => {
+    if (latestPoems.length === 0) return;
+
+    const interval = setInterval(() => {
+      setLatestIndex(
+        (previous) =>
+          (previous + 1) %
+          latestPoems.length
+      );
+    }, 5000);
+
+    return () =>
+      clearInterval(interval);
   }, [latestPoems.length]);
 
-  const moodPoems = useMemo(() => {
-    const filtered = poems.filter(
-      (poem) => poem.mood === selectedMood
-    );
+  /*
+   * CURRENT MOOD
+   */
 
-    if (sortMode === "rating") {
-      return [...filtered].sort((a, b) => b.rating - a.rating);
-    }
-
-    if (sortMode === "popular") {
-      return [...filtered].sort((a, b) => b.views - a.views);
-    }
-
-    if (sortMode === "liked") {
-      return [...filtered].sort((a, b) => b.likes - a.likes);
-    }
-
-    return [...filtered].sort(
-      (a, b) =>
-        new Date(b.date).getTime() -
-        new Date(a.date).getTime()
-    );
-  }, [selectedMood, sortMode]);
-
-  const selectedPoem = poems.find(
-    (poem) => poem.id === selectedPoemId
+  const mood = moods.find(
+    (item) => item.id === selectedMood
   );
 
-  const selectMood = (moodId: string) => {
+  /*
+   * MOOD POEMS
+   */
+
+  const moodPoems = useMemo(() => {
+    if (!mood) return [];
+
+    const poems = allPoems.filter(
+      (poem) =>
+        poem.mood.id === mood.id
+    );
+
+    if (
+      sortMode === "rating" ||
+      sortMode === "popular" ||
+      sortMode === "liked"
+    ) {
+      return [...poems].sort(
+        () => Math.random() - 0.5
+      );
+    }
+
+    return poems;
+  }, [mood, allPoems, sortMode]);
+
+  /*
+   * POEM KEY
+   */
+
+  const getPoemKey = (
+    poem: PoemWithMood
+  ) =>
+    `${poem.mood.id}-${poem.title}`;
+
+  /*
+   * OPEN POEM
+   */
+
+  const openPoem = (
+    poem: PoemWithMood
+  ) => {
+    setSelectedPoem(poem);
+    setIsFlipped(false);
+    setRating(0);
+  };
+
+  /*
+   * SELECT MOOD
+   */
+
+  const selectMood = (
+    moodId: string
+  ) => {
     setSelectedMood(moodId);
-    setSelectedPoemId(null);
     setShowCollection(false);
 
     setTimeout(() => {
       document
-        .getElementById("poetry-gallery")
-        ?.scrollIntoView({ behavior: "smooth" });
+        .getElementById(
+          "poetry-gallery"
+        )
+        ?.scrollIntoView({
+          behavior: "smooth",
+        });
     }, 100);
   };
 
-  const openPoem = (poem: Poem) => {
-    setSelectedMood(poem.mood);
-    setSelectedPoemId(poem.id);
-  };
+  /*
+   * SAVE / UNSAVE
+   */
 
-  const toggleSave = (id: number) => {
-    const updated = savedPoems.includes(id)
-      ? savedPoems.filter((poemId) => poemId !== id)
-      : [...savedPoems, id];
+  const toggleSave = (
+    poem: PoemWithMood
+  ) => {
+    const key = getPoemKey(poem);
+
+    const updated =
+      savedPoems.includes(key)
+        ? savedPoems.filter(
+            (savedKey) =>
+              savedKey !== key
+          )
+        : [...savedPoems, key];
 
     setSavedPoems(updated);
-    localStorage.setItem("saved-poems", JSON.stringify(updated));
+
+    localStorage.setItem(
+      "saved-poems",
+      JSON.stringify(updated)
+    );
   };
 
-  const ratePoem = (id: number, rating: number) => {
-    const updated = {
-      ...userRatings,
-      [id]: rating,
-    };
+  /*
+   * SAME MOOD POEMS
+   */
 
-    setUserRatings(updated);
-    localStorage.setItem("poem-ratings", JSON.stringify(updated));
+  const getSameMoodPoems = () => {
+    if (!selectedPoem) return [];
+
+    return allPoems.filter(
+      (poem) =>
+        poem.mood.id ===
+        selectedPoem.mood.id
+    );
   };
+
+  /*
+   * NEXT POEM
+   */
 
   const nextPoem = () => {
-    const currentIndex = moodPoems.findIndex(
-      (poem) => poem.id === selectedPoemId
-    );
+    if (!selectedPoem) return;
+
+    const poems =
+      getSameMoodPoems();
+
+    const currentIndex =
+      poems.findIndex(
+        (poem) =>
+          getPoemKey(poem) ===
+          getPoemKey(selectedPoem)
+      );
 
     const nextIndex =
-      (currentIndex + 1) % moodPoems.length;
+      (currentIndex + 1) %
+      poems.length;
 
-    setSelectedPoemId(moodPoems[nextIndex].id);
-  };
-
-  const previousPoem = () => {
-    const currentIndex = moodPoems.findIndex(
-      (poem) => poem.id === selectedPoemId
+    setSelectedPoem(
+      poems[nextIndex]
     );
 
+    setIsFlipped(false);
+    setRating(0);
+  };
+
+  /*
+   * PREVIOUS POEM
+   */
+
+  const previousPoem = () => {
+    if (!selectedPoem) return;
+
+    const poems =
+      getSameMoodPoems();
+
+    const currentIndex =
+      poems.findIndex(
+        (poem) =>
+          getPoemKey(poem) ===
+          getPoemKey(selectedPoem)
+      );
+
     const previousIndex =
-      (currentIndex - 1 + moodPoems.length) %
-      moodPoems.length;
+      (currentIndex -
+        1 +
+        poems.length) %
+      poems.length;
 
-    setSelectedPoemId(moodPoems[previousIndex].id);
+    setSelectedPoem(
+      poems[previousIndex]
+    );
+
+    setIsFlipped(false);
+    setRating(0);
   };
 
-  const surpriseMe = () => {
-    const randomMood =
-      moods[Math.floor(Math.random() * moods.length)];
+  /*
+   * SHUFFLE
+   */
 
-    setSelectedMood(randomMood.id);
-    setSelectedPoemId(null);
+  const shufflePoem = () => {
+    if (allPoems.length === 0) return;
 
-    setTimeout(() => {
-      document
-        .getElementById("poetry-gallery")
-        ?.scrollIntoView({ behavior: "smooth" });
-    }, 100);
+    const randomIndex =
+      Math.floor(
+        Math.random() *
+          allPoems.length
+      );
+
+    openPoem(
+      allPoems[randomIndex]
+    );
   };
+
+  /*
+   * DOUBLE CLICK FLIP
+   */
+
+  const handleDoubleClick = () => {
+    if (
+      selectedPoem?.meaning &&
+      selectedPoem.meaning.trim() !== ""
+    ) {
+      setIsFlipped(
+        (previous) => !previous
+      );
+    }
+  };
+
+  /*
+   * TOUCH SWIPE
+   */
+
+  const handleTouchStart = (
+    event: React.TouchEvent
+  ) => {
+    touchStartX.current =
+      event.touches[0].clientX;
+
+    touchStartY.current =
+      event.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (
+    event: React.TouchEvent
+  ) => {
+    if (
+      touchStartX.current === null ||
+      touchStartY.current === null
+    ) {
+      return;
+    }
+
+    const endX =
+      event.changedTouches[0].clientX;
+
+    const endY =
+      event.changedTouches[0].clientY;
+
+    const deltaX =
+      endX - touchStartX.current;
+
+    const deltaY =
+      endY - touchStartY.current;
+
+    const horizontalSwipe =
+      Math.abs(deltaX) > 60 &&
+      Math.abs(deltaX) >
+        Math.abs(deltaY);
+
+    if (horizontalSwipe) {
+      if (deltaX < 0) {
+        nextPoem();
+      } else {
+        previousPoem();
+      }
+    }
+
+    touchStartX.current = null;
+    touchStartY.current = null;
+  };
+
+  /*
+   * MOUSE DRAG
+   */
+
+  const [dragStartX, setDragStartX] =
+    useState<number | null>(null);
+
+  const handleMouseDown = (
+    event: React.MouseEvent
+  ) => {
+    setDragStartX(event.clientX);
+  };
+
+  const handleMouseUp = (
+    event: React.MouseEvent
+  ) => {
+    if (dragStartX === null) return;
+
+    const delta =
+      event.clientX - dragStartX;
+
+    if (Math.abs(delta) > 80) {
+      if (delta < 0) {
+        nextPoem();
+      } else {
+        previousPoem();
+      }
+    }
+
+    setDragStartX(null);
+  };
+
+  /*
+   * LOADING
+   */
+
+  if (loading) {
+    return (
+      <main className="site-shell loading-screen">
+        Loading the world of words...
+      </main>
+    );
+  }
 
   return (
     <main className="site-shell">
+
+      {/* SIDEBAR */}
+
       <aside className="sidebar">
+
         <div className="brand">
-          <SampleLogo />
-          <span>AANSU-E-ISHQ</span>
+
+          <Logo />
+
+          <span>
+            AANSU-E-ISHQ
+          </span>
+
         </div>
 
         <nav className="navigation">
+
           <button
-            className={!showCollection ? "nav-item active" : "nav-item"}
+            className={
+              !showCollection
+                ? "nav-item active"
+                : "nav-item"
+            }
             onClick={() => {
               setShowCollection(false);
               setMenuOpen(false);
@@ -414,11 +559,12 @@ export default function Home() {
             className="nav-item"
             onClick={() => {
               setShowCollection(false);
-              setMenuOpen(false);
 
               document
                 .getElementById("moods")
-                ?.scrollIntoView({ behavior: "smooth" });
+                ?.scrollIntoView({
+                  behavior: "smooth",
+                });
             }}
           >
             <span>⌕</span>
@@ -426,7 +572,11 @@ export default function Home() {
           </button>
 
           <button
-            className={showCollection ? "nav-item active" : "nav-item"}
+            className={
+              showCollection
+                ? "nav-item active"
+                : "nav-item"
+            }
             onClick={() => {
               setShowCollection(true);
               setMenuOpen(false);
@@ -435,10 +585,14 @@ export default function Home() {
             <span>♡</span>
             मेरी रचनाएं
           </button>
+
         </nav>
 
         <div className="sidebar-quote">
-          <div className="quote-symbol">“</div>
+
+          <div className="quote-symbol">
+            “
+          </div>
 
           <p>
             कुछ एहसास कहे
@@ -448,54 +602,90 @@ export default function Home() {
             लिखे जाते हैं।
           </p>
 
-          <span>— Aansu-e-Ishq</span>
+          <span>
+            — Aansu-e-Ishq
+          </span>
+
         </div>
 
         <div className="sidebar-bottom">
-          <span>THE INK</span>
-          <p>Where feelings find words.</p>
+
+          <span>
+            THE INK
+          </span>
+
+          <p>
+            Where feelings find words.
+          </p>
+
         </div>
+
       </aside>
 
+      {/* MAIN */}
+
       <section className="main-content">
+
         <header className="topbar">
+
           <div className="mobile-brand">
-            AANSU-E-ISHQ
+
+            <Logo />
+
+            <span>
+              AANSU-E-ISHQ
+            </span>
+
           </div>
 
           <div className="top-actions">
+
             <a
-              href="https://www.instagram.com/aansu_e_ishq?igsh=MWsyd2JkbWRyOXJiOQ=="
+              href="https://www.instagram.com/aansu_e_ishq"
               target="_blank"
               rel="noreferrer"
               className="instagram-button"
-              aria-label="Instagram"
             >
               ◎
             </a>
 
             <button
               className="menu-button"
-              onClick={() => setMenuOpen(!menuOpen)}
-              aria-label="Open menu"
+              onClick={() =>
+                setMenuOpen(!menuOpen)
+              }
             >
-              <span></span>
-              <span></span>
-              <span></span>
+              <span />
+              <span />
+              <span />
             </button>
+
           </div>
+
         </header>
 
-        <div className={`menu-panel ${menuOpen ? "open" : ""}`}>
+        {/* MENU */}
+
+        <div
+          className={`menu-panel ${
+            menuOpen ? "open" : ""
+          }`}
+        >
+
           <button
             className="menu-close"
-            onClick={() => setMenuOpen(false)}
+            onClick={() =>
+              setMenuOpen(false)
+            }
           >
             ×
           </button>
 
           <div className="menu-inner">
-            <span>EXPLORE THE WORLD OF WORDS</span>
+
+            <span>
+              EXPLORE THE WORLD OF WORDS
+            </span>
 
             <button
               onClick={() => {
@@ -512,7 +702,9 @@ export default function Home() {
 
                 document
                   .getElementById("moods")
-                  ?.scrollIntoView({ behavior: "smooth" });
+                  ?.scrollIntoView({
+                    behavior: "smooth",
+                  });
               }}
             >
               Explore Moods
@@ -528,33 +720,57 @@ export default function Home() {
             </button>
 
             <a
-              href="https://www.instagram.com/aansu_e_ishq?igsh=MWsyd2JkbWRyOXJiOQ=="
+              href="https://www.instagram.com/aansu_e_ishq"
               target="_blank"
               rel="noreferrer"
             >
               Instagram ↗
             </a>
 
-            <a href="mailto:contact@aansueishq.com">
-              Contact ↗
-            </a>
           </div>
+
         </div>
 
         {!showCollection ? (
+
           <>
+
+            {/* HERO */}
+
             <section className="hero-section">
+
               <div className="hero-content">
+
                 <p className="eyebrow">
                   THE LANGUAGE OF FEELINGS
                 </p>
 
-                <h1>AANSU-E-ISHQ</h1>
+                <div className="hero-brand-lockup">
+
+                  <Logo />
+
+                  <h1
+                    className={
+                      brandHindi
+                        ? "brand-changing hindi"
+                        : "brand-changing"
+                    }
+                  >
+                    {brandHindi
+                      ? "आंसू-ए-इश्क़"
+                      : "AANSU-E-ISHQ"}
+                  </h1>
+
+                </div>
 
                 <div className="hero-divider">
-                  <span></span>
+
+                  <span />
+
                   ✦
-                  <span></span>
+
+                  <span />
+
                 </div>
 
                 <h2>
@@ -568,220 +784,342 @@ export default function Home() {
                   onClick={() =>
                     document
                       .getElementById("moods")
-                      ?.scrollIntoView({ behavior: "smooth" })
+                      ?.scrollIntoView({
+                        behavior: "smooth",
+                      })
                   }
                 >
                   अपनी कविता खोजें →
                 </button>
+
               </div>
 
-              <div className="new-release-stage">
-                <div
-                  className={`release-paper ${latestPoems[latestIndex].visualClass}`}
-                >
-                  <span>
-                    NEW RELEASE · {latestIndex + 1}/5
-                  </span>
+              {latestPoems.length > 0 && (
 
-                  <h3>
-                    {latestPoems[latestIndex].title}
-                  </h3>
+                <div className="new-release-stage">
 
-                  <p>
-                    {latestPoems[latestIndex].text}
-                  </p>
-
-                  <button
-                    onClick={() =>
-                      openPoem(latestPoems[latestIndex])
-                    }
+                  <div
+                    className={`release-paper ${
+                      latestPoems[
+                        latestIndex
+                      ].visualClass
+                    }`}
                   >
-                    पढ़ें →
-                  </button>
+
+                    <span>
+                      RECENTLY PUBLISHED
+                    </span>
+
+                    <h3>
+                      {
+                        latestPoems[
+                          latestIndex
+                        ].title
+                      }
+                    </h3>
+
+                    <p>
+                      {
+                        latestPoems[
+                          latestIndex
+                        ].text
+                      }
+                    </p>
+
+                    <button
+                      onClick={() =>
+                        openPoem(
+                          latestPoems[
+                            latestIndex
+                          ]
+                        )
+                      }
+                    >
+                      पढ़ें →
+                    </button>
+
+                  </div>
+
+                  <div className="release-dots">
+
+                    {latestPoems.map(
+                      (_, index) => (
+
+                        <button
+                          key={index}
+                          className={
+                            latestIndex ===
+                            index
+                              ? "active"
+                              : ""
+                          }
+                          onClick={() =>
+                            setLatestIndex(
+                              index
+                            )
+                          }
+                        />
+
+                      )
+                    )}
+
+                  </div>
+
                 </div>
 
-                <div className="release-dots">
-                  {latestPoems.map((_, index) => (
-                    <button
-                      key={index}
-                      className={
-                        latestIndex === index ? "active" : ""
-                      }
-                      onClick={() => setLatestIndex(index)}
-                    />
-                  ))}
-                </div>
-              </div>
+              )}
+
             </section>
 
-            <section className="moods-section" id="moods">
+            {/* MOODS */}
+
+            <section
+              className="moods-section"
+              id="moods"
+            >
+
               <div className="section-heading">
-                <span>CHOOSE YOUR FEELING</span>
+
+                <span>
+                  CHOOSE YOUR FEELING
+                </span>
 
                 <h2>
                   आज आप कैसा महसूस कर रहे हैं?
                 </h2>
 
-                <p>अपनी भावना चुनें</p>
+                <p>
+                  अपनी भावना चुनें
+                </p>
+
               </div>
 
               <div className="mood-grid">
+
                 {moods.map((item) => (
+
                   <button
                     key={item.id}
-                    className={`mood-card mood-${item.id} ${
-                      selectedMood === item.id
+                    className={`mood-card ${
+                      selectedMood ===
+                      item.id
                         ? "selected"
                         : ""
                     }`}
-                    onClick={() => selectMood(item.id)}
+                    style={
+                      {
+                        "--mood-color":
+                          item.identityColor,
+                      } as React.CSSProperties
+                    }
+                    onClick={() =>
+                      selectMood(item.id)
+                    }
                   >
+
+                    <div className="mood-color-glow" />
+
                     <div className="mood-icon">
                       {item.icon}
                     </div>
 
-                    <h3>{item.name}</h3>
+                    <h3>
+                      {item.name}
+                    </h3>
 
-                    <p>{item.description}</p>
+                    <p>
+                      {item.description}
+                    </p>
 
                     <div className="card-ornament">
-                      <span></span>
+
+                      <span />
+
                       ✦
-                      <span></span>
+
+                      <span />
+
                     </div>
+
                   </button>
+
                 ))}
+
               </div>
 
               <button
                 className="surprise-button"
-                onClick={surpriseMe}
+                onClick={shufflePoem}
               >
-                ✨ मुझे चौंकाओ
+                ⇄ Shuffle
+
                 <small>
-                  किसी भी एहसास तक पहुंचो
+                  Let the words find you
                 </small>
+
               </button>
+
             </section>
 
-            <section
-              className="gallery-section"
-              id="poetry-gallery"
-            >
-              <div className="section-heading">
-                <span>YOUR EMOTIONAL WORLD</span>
+            {/* GALLERY */}
 
-                <h2>{mood.name}</h2>
+            {mood && (
 
-                <p>{mood.description}</p>
-              </div>
-
-              <div className="sorting-options">
-                <button
-                  className={
-                    sortMode === "latest"
-                      ? "active"
-                      : ""
-                  }
-                  onClick={() => setSortMode("latest")}
-                >
-                  नवीनतम
-                </button>
-
-                <button
-                  className={
-                    sortMode === "rating"
-                      ? "active"
-                      : ""
-                  }
-                  onClick={() => setSortMode("rating")}
-                >
-                  ⭐ Best Rated
-                </button>
-
-                <button
-                  className={
-                    sortMode === "popular"
-                      ? "active"
-                      : ""
-                  }
-                  onClick={() => setSortMode("popular")}
-                >
-                  ◉ Most Popular
-                </button>
-
-                <button
-                  className={
-                    sortMode === "liked"
-                      ? "active"
-                      : ""
-                  }
-                  onClick={() => setSortMode("liked")}
-                >
-                  ♥ Most Liked
-                </button>
-              </div>
-
-              <div
-                className="mood-identity"
-                style={
-                  {
-                    "--identity-color":
-                      mood.identityColor,
-                  } as React.CSSProperties
-                }
+              <section
+                className="gallery-section"
+                id="poetry-gallery"
               >
-                <div className="identity-arc"></div>
 
-                <span>
-                  {mood.icon} {mood.name}
-                </span>
-              </div>
+                <div className="section-heading">
 
-              <div className="poetry-gallery">
-                {moodPoems.map((poem, index) => (
+                  <span>
+                    YOUR EMOTIONAL WORLD
+                  </span>
+
+                  <h2>
+                    {mood.name}
+                  </h2>
+
+                  <p>
+                    {mood.description}
+                  </p>
+
+                </div>
+
+                <div className="sorting-options">
+
                   <button
-                    key={poem.id}
-                    className={`gallery-poem ${poem.visualClass}`}
-                    onClick={() => openPoem(poem)}
+                    className={
+                      sortMode === "latest"
+                        ? "active"
+                        : ""
+                    }
+                    onClick={() =>
+                      setSortMode("latest")
+                    }
                   >
-                    <span className="gallery-number">
-                      {String(index + 1).padStart(2, "0")}
-                    </span>
-
-                    <h3>{poem.title}</h3>
-
-                    <p>
-                      {poem.text.split("\n")[0]}
-                    </p>
-
-                    <div className="poem-stats">
-                      <span>
-                        ★ {poem.rating.toFixed(1)}
-                      </span>
-
-                      <span>
-                        ♥ {poem.likes}
-                      </span>
-
-                      <span>
-                        ◉ {poem.views}
-                      </span>
-                    </div>
-
-                    <span className="open-poem">
-                      खोलें →
-                    </span>
+                    नवीनतम
                   </button>
-                ))}
-              </div>
-            </section>
-          </>
-        ) : (
-          <section className="collection-section">
-            <span>YOUR PERSONAL SPACE</span>
 
-            <h1>मेरी रचनाएं</h1>
+                  <button
+                    className={
+                      sortMode === "rating"
+                        ? "active"
+                        : ""
+                    }
+                    onClick={() =>
+                      setSortMode("rating")
+                    }
+                  >
+                    Most Rated
+                  </button>
+
+                  <button
+                    className={
+                      sortMode === "popular"
+                        ? "active"
+                        : ""
+                    }
+                    onClick={() =>
+                      setSortMode("popular")
+                    }
+                  >
+                    Most Popular
+                  </button>
+
+                  <button
+                    className={
+                      sortMode === "liked"
+                        ? "active"
+                        : ""
+                    }
+                    onClick={() =>
+                      setSortMode("liked")
+                    }
+                  >
+                    Most Liked
+                  </button>
+
+                </div>
+
+                <div
+                  className="mood-identity"
+                  style={
+                    {
+                      "--identity-color":
+                        mood.identityColor,
+                    } as React.CSSProperties
+                  }
+                >
+
+                  <div className="identity-arc" />
+
+                  <span>
+                    {mood.icon}{" "}
+                    {mood.name}
+                  </span>
+
+                </div>
+
+                <div className="poetry-gallery">
+
+                  {moodPoems.map(
+                    (poem) => (
+
+                      <button
+                        key={getPoemKey(
+                          poem
+                        )}
+                        className={`gallery-poem ${
+                          poem.visualClass
+                        }`}
+                        onClick={() =>
+                          openPoem(poem)
+                        }
+                      >
+
+                        <h3>
+                          {poem.title}
+                        </h3>
+
+                        <p>
+                          {
+                            poem.text.split(
+                              "\n"
+                            )[0]
+                          }
+                        </p>
+
+                        <span className="open-poem">
+                          खोलें →
+                        </span>
+
+                      </button>
+
+                    )
+                  )}
+
+                </div>
+
+              </section>
+
+            )}
+
+          </>
+
+        ) : (
+
+          /* COLLECTION */
+
+          <section className="collection-section">
+
+            <span>
+              YOUR PERSONAL SPACE
+            </span>
+
+            <h1>
+              मेरी रचनाएं
+            </h1>
 
             <p>
               जो शब्द तुम्हें पसंद आए,
@@ -790,8 +1128,12 @@ export default function Home() {
             </p>
 
             {savedPoems.length === 0 ? (
+
               <div className="empty-collection">
-                <div>♡</div>
+
+                <div>
+                  ♡
+                </div>
 
                 <h2>
                   अभी यहां कुछ नहीं है
@@ -811,59 +1153,93 @@ export default function Home() {
                 >
                   कविताएं खोजें →
                 </button>
+
               </div>
+
             ) : (
+
               <div className="saved-grid">
-                {poems
+
+                {allPoems
                   .filter((poem) =>
-                    savedPoems.includes(poem.id)
+                    savedPoems.includes(
+                      getPoemKey(poem)
+                    )
                   )
                   .map((poem) => (
-                    <article
-                      key={poem.id}
-                      className={`saved-poem-card ${poem.visualClass}`}
-                    >
-                      <span>{poem.title}</span>
 
-                      <p>{poem.text}</p>
+                    <article
+                      key={getPoemKey(
+                        poem
+                      )}
+                      className={`saved-poem-card ${
+                        poem.visualClass
+                      }`}
+                    >
+
+                      <span>
+                        {poem.title}
+                      </span>
+
+                      <p>
+                        {poem.text}
+                      </p>
 
                       <button
                         onClick={() =>
-                          toggleSave(poem.id)
+                          toggleSave(poem)
                         }
                         className="remove-save"
                       >
                         ♥ Saved
                       </button>
+
                     </article>
+
                   ))}
+
               </div>
+
             )}
+
           </section>
+
         )}
 
         <footer className="footer">
-          <span>READ · FEEL · CONNECT</span>
+
+          <span>
+            READ · FEEL · CONNECT
+          </span>
 
           <a
-            href="https://www.instagram.com/aansu_e_ishq?igsh=MWsyd2JkbWRyOXJiOQ=="
+            href="https://www.instagram.com/aansu_e_ishq"
             target="_blank"
             rel="noreferrer"
           >
             Instagram ↗
           </a>
 
-          <span>© AANSU-E-ISHQ</span>
+          <span>
+            © AANSU-E-ISHQ
+          </span>
+
         </footer>
+
       </section>
 
+      {/* POEM OVERLAY */}
+
       {selectedPoem && (
+
         <div className="poem-overlay">
+
           <button
             className="overlay-close"
-            onClick={() =>
-              setSelectedPoemId(null)
-            }
+            onClick={() => {
+              setSelectedPoem(null);
+              setIsFlipped(false);
+            }}
           >
             ×
           </button>
@@ -876,138 +1252,191 @@ export default function Home() {
           </button>
 
           <div
-            className={`flashcard-wrapper ${selectedPoem.visualClass}`}
-            onTouchStart={(event) => {
-              const touch = event.touches[0];
-
-              (
-                event.currentTarget as HTMLElement
-              ).dataset.startX =
-                touch.clientX.toString();
-            }}
-            onTouchEnd={(event) => {
-              const startX = Number(
-                (
-                  event.currentTarget as HTMLElement
-                ).dataset.startX
-              );
-
-              const endX =
-                event.changedTouches[0].clientX;
-
-              const difference = endX - startX;
-
-              if (difference > 60) previousPoem();
-
-              if (difference < -60) nextPoem();
-            }}
+            className={`flashcard-wrapper ${
+              selectedPoem.visualClass
+            } ${
+              isFlipped
+                ? "is-flipped"
+                : ""
+            }`}
+            onDoubleClick={
+              handleDoubleClick
+            }
+            onTouchStart={
+              handleTouchStart
+            }
+            onTouchEnd={
+              handleTouchEnd
+            }
+            onMouseDown={
+              handleMouseDown
+            }
+            onMouseUp={
+              handleMouseUp
+            }
           >
-            <div
-              className="flashcard-mood-arc"
-              style={
-                {
-                  "--identity-color":
-                    mood.identityColor,
-                } as React.CSSProperties
-              }
-            ></div>
 
-            <div className="flashcard-top">
-              <span>
-                {mood.icon} {mood.name}
-              </span>
+            {/* FRONT */}
 
-              <button
-                className={`flash-save ${
-                  savedPoems.includes(
-                    selectedPoem.id
-                  )
-                    ? "saved"
-                    : ""
-                }`}
-                onClick={() =>
-                  toggleSave(selectedPoem.id)
+            <div className="flashcard-face flashcard-front">
+
+              <div
+                className="flashcard-mood-arc"
+                style={
+                  {
+                    "--identity-color":
+                      selectedPoem
+                        .mood
+                        .identityColor,
+                  } as React.CSSProperties
                 }
-              >
-                {savedPoems.includes(
-                  selectedPoem.id
-                )
-                  ? "♥"
-                  : "♡"}
-              </button>
-            </div>
+              />
 
-            <div className="flashcard-content">
-              <span className="flashcard-label">
-                {selectedPoem.title}
-              </span>
+              <div className="flashcard-top">
 
-              <div className="flashcard-text">
-                {selectedPoem.text
-                  .split("\n")
-                  .map((line, index) => (
-                    <p key={index}>
-                      {line || "\u00A0"}
-                    </p>
-                  ))}
-              </div>
-            </div>
+                <span>
+                  {
+                    selectedPoem
+                      .mood
+                      .icon
+                  }{" "}
+                  {
+                    selectedPoem
+                      .mood
+                      .name
+                  }
+                </span>
 
-            <div className="rating-section">
-              <span>
-                इस कविता को महसूस करें
-              </span>
+                <button
+                  className={`flash-save ${
+                    savedPoems.includes(
+                      getPoemKey(
+                        selectedPoem
+                      )
+                    )
+                      ? "saved"
+                      : ""
+                  }`}
+                  onClick={(event) => {
+                    event.stopPropagation();
 
-              <div className="stars">
-                {[1, 2, 3, 4, 5].map(
-                  (star) => (
-                    <button
-                      key={star}
-                      className={
-                        (
-                          userRatings[
-                            selectedPoem.id
-                          ] || 0
-                        ) >= star
-                          ? "selected-star"
-                          : ""
-                      }
-                      onClick={() =>
-                        ratePoem(
-                          selectedPoem.id,
-                          star
-                        )
-                      }
-                    >
-                      ★
-                    </button>
+                    toggleSave(
+                      selectedPoem
+                    );
+                  }}
+                >
+                  {savedPoems.includes(
+                    getPoemKey(
+                      selectedPoem
+                    )
                   )
-                )}
+                    ? "♥"
+                    : "♡"}
+                </button>
+
               </div>
+
+              <div className="flashcard-content">
+
+                <span className="flashcard-label">
+                  {
+                    selectedPoem.title
+                  }
+                </span>
+
+                <div className="flashcard-text">
+
+                  {selectedPoem.text
+                    .split("\n")
+                    .map(
+                      (line, index) => (
+
+                        <p key={index}>
+                          {line ||
+                            "\u00A0"}
+                        </p>
+
+                      )
+                    )}
+
+                </div>
+
+              </div>
+
+              <div className="rating-section">
+
+                <span>
+                  Rate this poem
+                </span>
+
+                <div className="rating-stars">
+
+                  {[1, 2, 3, 4, 5].map(
+                    (star) => (
+
+                      <button
+                        key={star}
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          setRating(star);
+                        }}
+                        className={
+                          star <= rating
+                            ? "rated"
+                            : ""
+                        }
+                      >
+                        ★
+                      </button>
+
+                    )
+                  )}
+
+                </div>
+
+              </div>
+
+              <div className="flashcard-bottom">
+
+                <span>
+                  — Aansu-e-Ishq
+                </span>
+
+                <small>
+                  Swipe to explore · Double-click to flip
+                </small>
+
+              </div>
+
+            </div>
+
+            {/* BACK */}
+
+            <div className="flashcard-face flashcard-back">
+
+              <span className="meaning-label">
+                भावार्थ
+              </span>
+
+              <h2>
+                {
+                  selectedPoem.title
+                }
+              </h2>
+
+              <p>
+                {
+                  selectedPoem.meaning ||
+                  "इस कविता का भावार्थ अभी उपलब्ध नहीं है।"
+                }
+              </p>
 
               <small>
-                {userRatings[selectedPoem.id]
-                  ? `आपकी rating: ${userRatings[selectedPoem.id]}/5`
-                  : "अपनी rating दें"}
-                {" · "}
-                Average:{" "}
-                {selectedPoem.rating.toFixed(1)}/5
+                Double-click to return
               </small>
+
             </div>
 
-            <div className="flashcard-bottom">
-              <span>
-                — {selectedPoem.author}
-              </span>
-
-              <span>
-                {moodPoems.findIndex(
-                  (poem) =>
-                    poem.id === selectedPoem.id
-                ) + 1}{" "}
-                / {moodPoems.length}
-              </span>
-            </div>
           </div>
 
           <button
@@ -1018,12 +1447,21 @@ export default function Home() {
           </button>
 
           <div className="swipe-text">
+
             ← पिछली कविता
-            <span>SWIPE</span>
+
+            <span>
+              SWIPE
+            </span>
+
             अगली कविता →
+
           </div>
+
         </div>
+
       )}
+
     </main>
   );
 }

@@ -1,0 +1,49 @@
+{
+  "id": "ishq",
+  "name": "Ishq",
+  "description": "मोहब्बत, आकर्षण और उन एहसासों के लिए जिन्हें शब्दों में बांधना मुश्किल है।",
+  "icon": "♡",
+  "identityColor": "#C77D8A",
+  "poems": [
+    {
+      "title": "प्यार के सिवा",
+      "text": "Usne mujhe smjha hi kya, gunehgar ke siwa,\n\nHumne to sb kiya ishq me, iqraar ke siwa\n\nHar shayar ka dil tuta ho, zaruri to nahi\n\nAur bhi dukh hai zamane me pyaar ke siwa…",
+      "meaning": "यह कविता प्रेम में गलत समझे जाने और अपनी भावनाओं को पूरी तरह व्यक्त न कर पाने की पीड़ा को दर्शाती है। इसमें प्रेम, इकरार और उन अनकहे एहसासों की कसक है जो रिश्ते के अंत के बाद भी दिल में रह जाते हैं।"
+    },
+    {
+      "title": "चाशनी का दरिया",
+      "text": "Chasni ka Dariya uphaan pe hai, besak bhawre dub rhe honge.\n\nKhubsurat bhut ho tum, zarur aashik khub rhe honge",
+      "meaning": "यह एक खूबसूरत और रूपकपूर्ण प्रेम कविता है जिसमें महबूब की सुंदरता को चाशनी से भरे दरिया की तरह बताया गया है। उसकी खूबसूरती इतनी आकर्षक है कि अनेक आशिक उसके आकर्षण में डूब जाते होंगे।"
+    },
+    {
+      "title": "मजबूरी में छोड़ी गली",
+      "text": "Tadap thi, pansd thi phir bhi gali chhor aaye, hum bhi to mazboor rhe honge.\n\nMehfil me Charchit bhut ho tum, aahiq zarur rhe honge",
+      "meaning": "यह कविता आकर्षण और मजबूरी के बीच छूटे हुए रिश्ते की भावना को व्यक्त करती है। कवि मानता है कि पसंद और तड़प होने के बावजूद किसी को छोड़कर जाना पड़ा होगा, जबकि वह व्यक्ति अपनी महफिल में आज भी बहुत चर्चित और चाहने वालों से घिरा हुआ होगा।"
+    },
+    {
+      "title": "उसकी मुस्कान",
+      "text": "Uski muskaan pe agar hum sher banane lag jaye,\nTo gham bhi hans kar khud ko bhulane lag jaye,\nItni haseen hai wo is jahaan me yaar,\nKi sitare bhi use dekh sharmane lag jaye.",
+      "meaning": "यह कविता महबूब की मुस्कान और खूबसूरती की अतिशयोक्तिपूर्ण प्रशंसा है। कवि कहता है कि उसकी मुस्कान इतनी प्रभावशाली है कि उसके ऊपर शेर लिखे जाएं तो गम भी मुस्कुराकर खुद को भूल जाए और उसकी सुंदरता के सामने सितारे भी शर्मा जाएं।"
+    },
+    {
+      "title": "उसकी खूबसूरती",
+      "text": "Agar hum uski khubsurati batane lag jaye\n\nChehre ki kya baat kre, sirf aakho pe hi zamane lag jaye\n\nMeri kalm betab hai kuch likhne ko,\n\nUski muskaan pe agar hum sher banane lag jaye,\nTo gham bhi hans kar khud ko bhulane lag jaye,\nItni haseen hai wo is jahaan me yaar,\nKi sitare bhi use dekh sharmane lag jaye.",
+      "meaning": "यह कविता महबूब की खूबसूरती को शब्दों में समेटने की असंभव कोशिश है। कवि को लगता है कि यदि वह उसकी सुंदरता का वर्णन शुरू कर दे तो केवल उसकी आंखों पर ही पूरी दुनिया लिखी जा सकती है और उसकी मुस्कान इतनी खूबसूरत है कि उसके सामने गम और सितारे दोनों फीके पड़ जाते हैं।"
+    },
+    {
+      "title": "समंदर में घर",
+      "text": "Shaukhon pe kabhi pehra nahi bithaya humne,\nJo kuch bhi dil ne chaha, use paya humne\nLog darte rahe doobne ke khauf se kinaaro pe\nAur,Dil lag gya to samandar me bhi ghar banaya humne.",
+      "meaning": "यह कविता प्रेम और भावनाओं को बिना डर के पूरी तरह जीने की बात करती है। जहां लोग डूबने के डर से किनारे पर खड़े रहे, वहीं कवि ने जब किसी से दिल लगाया तो उस प्रेम की गहराई में पूरी तरह उतरकर वहीं अपना संसार बना लिया।"
+    },
+    {
+      "title": "ख़्वाबों में उसका नाम",
+      "text": "Neend aayi bhi toh khwaab tere aate rahe,\nHum poori raat khud se nazrein churaate rahe.\nJise bhoolne ki zid mein guzari thi zindagi,\nHum Usi ka naam khwab me gungunaate rahe.",
+      "meaning": "यह कविता उस गहरे प्रेम की याद को व्यक्त करती है जिसे भुलाने की कोशिश के बावजूद दिल छोड़ नहीं पाता। नींद में भी वही व्यक्ति ख्वाब बनकर आता रहता है और उसकी यादें अनजाने में फिर से दिल में गूंजती रहती हैं।"
+    },
+    {
+      "title": "मोहब्बत नीलाम कर गई",
+      "text": "उम्र बहुत बाक़ी है अभी,\nहादसे तमाम होंगे\n\nजिन्हें अपना जहाँ कहोगे,\nवही एक दिन गुमनाम होंगे\n\nमोहब्बत हर बार मुकम्मल नहीं होती, ये भी जान लेना\n\nहर ममुस्कान को प्यार का इकरार न मान लेना\n\nअगर न हो यक़ीन तो करो आशिक़ी\nफिर देखो क्या अंजाम होता है\n\nआने दो उसे क़रीब\nफिर बताना क्या क्या नीलाम होता है\n\n\nऐसे ही नहीं कह रहा,\n\nहमने भी किया था इश्क़\n\nहमने भी लगाई थीं निगाहों से निगाहें\nबहुत क़ातिल थीं उनकी अदाएँ\nताज़ा हो गईं उदास फ़िज़ाएँ\n\nलेकिन...\n\nख़ुदगर्ज़ निकली\nदिल का क़त्लेआम कर गई\n\nमैं मासूम था\nमुझे बदनाम कर गई\nपीठ पीछे नहीं\nखुलेआम कर गई\n\nहँसते हुए चेहरे को सुनसान कर गई\nख़ूबसूरत से बाग़ को वीरान कर गई\n\nजी हाँ\n\nवो मोहब्बत को नीलाम कर गई. इस आशिक को बदनाम कर गई 🙂‍↕️",
+      "meaning": "यह एक ऐसी प्रेम-कविता है जिसमें मोहब्बत की शुरुआत, आकर्षण, विश्वास और अंततः उसके टूट जाने की पूरी यात्रा दिखाई देती है। कवि बताता है कि प्रेम बेहद खूबसूरत लग सकता है, लेकिन गलत व्यक्ति के हाथों वही मोहब्बत दिल को तबाह कर सकती है।"
+    }
+  ]
+}

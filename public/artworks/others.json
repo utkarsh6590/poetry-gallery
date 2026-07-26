@@ -1,0 +1,24 @@
+{
+  "id": "others",
+  "name": "Others",
+  "description": "उन भावनाओं और विचारों के लिए जिन्हें किसी एक श्रेणी में बांधना मुश्किल है।",
+  "icon": "✦",
+  "identityColor": "#9A8C9A",
+  "poems": [
+    {
+      "title": "नवाबों वाली शोख़ी",
+      "text": "Shaukh nawabo wali hi rhi,\nkabhi aam nahi huye\n\nTere laakh kosis ke baad bhi,\nhum badnaam nhi huye\n\nHumne Zid se tarasha hai apne wazood ko\n\nHumare kirdaar kabbi Bazaar me neelam nahi huye",
+      "meaning": "यह कविता आत्मसम्मान, अपने व्यक्तित्व और चरित्र पर अडिग रहने की भावना को व्यक्त करती है। कवि कहता है कि उसने अपने अस्तित्व को अपनी जिद और सिद्धांतों से गढ़ा है, इसलिए न तो वह आम बना और न ही किसी के प्रयासों के बावजूद उसका चरित्र बदनाम या बिकाऊ हुआ।"
+    },
+    {
+      "title": "समंदर में घर",
+      "text": "Shaukhon pe kabhi pehra nahi bithaya humne,\nJo kuch bhi dil ne chaha, use paya humne\nLog darte rahe doobne ke khauf se kinaaro pe\nAur,Dil lag gya to samandar me bhi ghar banaya humne.",
+      "meaning": "यह कविता बेखौफ होकर अपनी इच्छाओं और भावनाओं को जीने की बात करती है। जहां लोग असफलता या जोखिम के डर से किनारे पर खड़े रहे, वहीं कवि ने अपने दिल की बात मानी और इतना गहरा उतर गया कि समंदर में भी अपना घर बना लिया।"
+    },
+    {
+      "title": "रुतबा बरकरार",
+      "text": "Humne khud ko har daur ke liye taiyaar rakha,\nKoi ungli na utha ske humpe aisa kirdaar rakha.\nJo log humein haraane nikle the kabhi,\nUnke ke saamne bhi rutba barkaraar rakha.",
+      "meaning": "यह कविता चरित्र, आत्मसम्मान और विपरीत परिस्थितियों में अपनी प्रतिष्ठा बनाए रखने की भावना को व्यक्त करती है। कवि कहता है कि उसने अपने आचरण को इतना मजबूत रखा कि कोई उस पर उंगली न उठा सके और जो लोग उसे हराने निकले थे, उनके सामने भी उसका सम्मान और रुतबा कायम रहा।"
+    }
+  ]
+}
